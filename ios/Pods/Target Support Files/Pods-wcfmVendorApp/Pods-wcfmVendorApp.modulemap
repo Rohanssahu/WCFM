@@ -1,0 +1,6 @@
+module Pods_wcfmVendorApp {
+  umbrella header "Pods-wcfmVendorApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

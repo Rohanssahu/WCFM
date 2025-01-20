@@ -1,0 +1,17 @@
+'RCTFatalException: Unhandled JS Exception: Invariant Violation: TurboModuleRegistry.getEnforcing(...): 'DevMenu' could not be found. Verify that a module by this name is registered in the native binary.', reason: 'Unhandled JS Exception: Invariant Violation: TurboModuleRegistry.getEnforcing(...): 'DevMenu' could not be found. Verify that a module by this name is registered in the native..., stack:
+<unknown>@20:286
+<unknown>@39:286
+<unknown>@440:720
+h@2:1585
+<unknown>@439:177
+h@2:1585
+<unknown>@12:1022
+h@2:1585
+<unknown>@11:557
+h@2:1585
+<unknown>@8:73
+h@2:1585
+<unknown>@6:43
+h@2:1585
+d@2:958
+global code@2654:3

@@ -1,0 +1,69 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '12.0'
+
+target '7DShop' do
+  config = use_native_modules!
+
+  use_react_native!(:path => config["reactNativePath"])
+
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
+
+  # pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker'
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
+
+  target '7DShopTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable these next few lines.
+  use_flipper!({ 'Flipper' => '0.74.0' })
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+        
+        # Disable bitcode for OpenSSL.framework
+        if target.name == 'OpenSSL'
+          config.build_settings['ENABLE_BITCODE'] = 'NO'
+        end
+      end
+    end
+  
+    # Strip bitcode from specific frameworks
+    flipper_post_install(installer)
+  
+    bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
+def strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
+  framework_path = File.join(Dir.pwd, framework_relative_path)
+  command = "#{bitcode_strip_path} #{framework_path} -r -o #{framework_path}"
+  puts "Stripping bitcode: #{command}"
+  system(command)
+end
+
+framework_paths = [
+  "Pods/OpenSSL-Universal/Frameworks/OpenSSL.xcframework/ios-arm64_arm64e_armv7_armv7s/OpenSSL.framework/OpenSSL",
+  "Pods/hermes-engine/destroot/Library/Frameworks/macosx/hermes.framework/hermes",
+  "Pods/hermes-engine/destroot/Library/Frameworks/macosx/hermes.framework/Versions/Current/hermes",
+  "Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework/ios-arm64/hermes.framework/hermes",
+  "Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework/ios-arm64_x86_64-maccatalyst/hermes.framework/hermes"
+]
+
+framework_paths.each do |framework_relative_path|
+  strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
+end
+  end
+end
